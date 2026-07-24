@@ -1,23 +1,50 @@
 {
-    "name": "versioner",
-    "description": "Um script simples para automatizar o versionamento de projetos utilizando um modelo próprio de versionamento baseado em marcos do projeto.",
+    "name": "@carloscoding/versioner",
+    "version": "1.1.13",
+    "description": "CLI para automatizar versionamento e fluxo de Git usando um modelo de versionamento baseado em marcos do projeto (major.minor.build).",
     "license": "MIT",
     "author": "CarlosCoding",
     "type": "commonjs",
-    "main": "index.js",
+    "main": "src/index.js",
     "bin": {
         "versioner": "bin/versioner.js"
     },
+    "files": [
+        "bin",
+        "src",
+        "README.md",
+        "LICENSE"
+    ],
+    "engines": {
+        "node": ">=16"
+    },
     "scripts": {
         "start": "node ./bin/versioner.js",
-        "dev": "node ./bin/versioner.js"
+        "dev": "node ./bin/versioner.js",
+        "help": "node ./bin/versioner.js help",
+        "test": "node ./test/smoke.js",
+        "prepublishOnly": "node ./test/smoke.js"
     },
     "keywords": [
         "version",
+        "versioning",
         "release",
         "git",
         "automation",
-        "cli"
+        "cli",
+        "build",
+        "semver",
+        "expo"
     ],
-    "version": "1.1.12"
+    "publishConfig": {
+        "access": "public"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/CarlosCoding/versioner.git"
+    },
+    "bugs": {
+        "url": "https://github.com/CarlosCoding/versioner/issues"
+    },
+    "homepage": "https://github.com/CarlosCoding/versioner#readme"
 }

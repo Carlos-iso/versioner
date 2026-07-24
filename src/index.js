@@ -1,56 +1,28 @@
-const ReleaseManager = require("./ReleaseManager");
+/**
+ * Entrada programática do Versioner.
+ *
+ * const { ReleaseManager, createContext } = require("@carloscoding/versioner");
+ */
 
-const args = process.argv.slice(2);
+const ReleaseManager = require("./managers/ReleaseManager");
+const VersionManager = require("./managers/VersionManager");
+const ConfigManager = require("./managers/ConfigManager");
+const FileManager = require("./managers/FileManager");
+const GitManager = require("./managers/GitManager");
+const CommandRouter = require("./services/CommandRouter");
 
-const context = {
+const { createContext } = require("./core/Context");
+const logger = require("./utils/logger");
+const constants = require("./constants");
 
-    // Argumentos da CLI
-    type: args[0],
-    message: args.slice(1).join(" "),
-
-    // Diretório onde a ferramenta foi executada
-    cwd: process.cwd(),
-
-    // Configuração do projeto
-    config: null,
-
-    // Versão anterior (string)
-    previousVersion: null,
-
-    // Versão atual (string)
-    version: null,
-
-    // Objeto da versão anterior
-    previous: {
-        major: null,
-        minor: null,
-        build: null
-    },
-
-    // Objeto da versão atual
-    current: {
-        major: null,
-        minor: null,
-        build: null
-    },
-
-    // Arquivos atualizados durante a release
-    files: [],
-
-    // Informações do Git
-    git: {
-        add: false,
-        commit: false,
-        push: false,
-        tag: false
-    },
-
-    // Controle de execução
-    startedAt: new Date(),
-    finishedAt: null
-
+module.exports = {
+	ReleaseManager,
+	VersionManager,
+	ConfigManager,
+	FileManager,
+	GitManager,
+	CommandRouter,
+	createContext,
+	logger,
+	constants,
 };
-
-const release = new ReleaseManager();
-
-release.run(context);

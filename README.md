@@ -1,218 +1,290 @@
 # Versioner
 
-Um script simples para automatizar o versionamento de projetos utilizando um modelo próprio de versionamento baseado em marcos do projeto.
+CLI que substitui o fluxo manual de release por um único comando.
 
-## Objetivo
+Antes:
 
-O objetivo deste projeto é facilitar o gerenciamento de versões durante o desenvolvimento.
+```bash
+# edita package.json
+# edita app.json
+git add .
+git commit -m "v1.4.273 - Corrige login"
+git push
+```
 
-Em vez de atualizar manualmente os números de versão a cada alteração, o script realiza essa tarefa automaticamente e pode ser integrado ao fluxo de Git (`git add`, `git commit` e `git push`).
+Depois:
 
-O foco inicial é ser utilizado através de scripts do `package.json`, sem dependências externas e sem necessidade de instalação como biblioteca.
+```bash
+versioner build "Corrige login"
+```
+
+Sem dependências externas. Só Node.js e Git.
 
 ---
 
-# Modelo de Versionamento
+## Instalação
 
-O projeto utiliza o formato:
+No projeto:
 
+```bash
+npm install -D @carloscoding/versioner
 ```
-vX.Y.Z
+
+Sem instalar:
+
+```bash
+npx @carloscoding/versioner init
 ```
 
-Onde:
+Global:
 
-## X - Major
-
-Representa um grande marco do projeto.
-
-Exemplos:
-
-* Primeiro lançamento oficial
-* Grande reformulação
-* Nova arquitetura
-* Reescrita completa
-* Mudança significativa de funcionalidades
-
-Este valor **não é incrementado automaticamente**.
-
-Quando incrementado:
-
-* X++
-* Y = 0
-* Z++
-
-Exemplo:
-
+```bash
+npm install -g @carloscoding/versioner
 ```
-v1.14.258
 
-↓
-
-v2.0.259
-```
+Requer Node.js 16 ou superior.
 
 ---
 
-## Y - Minor
+## Início rápido
 
-Representa pequenas evoluções dentro da mesma versão principal.
-
-Exemplos:
-
-* Nova funcionalidade
-* Melhorias
-* Ajustes importantes
-* Recursos adicionais
-
-Quando incrementado:
-
-* Y++
-* Z++
-
-Exemplo:
-
-```
-v2.14.583
-
-↓
-
-v2.15.584
+```bash
+cd meu-projeto
+npx @carloscoding/versioner init
+npx versioner build "primeira release"
 ```
 
----
+O `init` cria dois arquivos, detecta o `package.json` e o `app.json`, e pergunta a versão inicial.
 
-## Z - Build
-
-Representa cada publicação do projeto.
-
-Toda vez que houver um novo commit/release utilizando o script, este número é incrementado.
-
-O contador **nunca é reiniciado**.
-
-Exemplo:
-
-```
-v2.15.584
-
-↓
-
-v2.15.585
-
-↓
-
-v2.15.586
-```
-
-Mesmo quando ocorre uma nova versão Major.
-
-```
-v2.18.612
-
-↓
-
-v3.0.613
-```
-
----
-
-# Filosofia
-
-Este sistema é baseado em marcos do desenvolvimento.
-
-A versão Major representa grandes acontecimentos do projeto.
-
-A versão Minor representa a evolução daquela grande versão.
-
-A Build representa o histórico completo de todas as publicações realizadas.
-
-Isso permite identificar rapidamente:
-
-* Quantas grandes versões o projeto teve.
-* Quantas atualizações cada versão recebeu.
-* Quantas builds já foram publicadas desde o início do projeto.
-
----
-
-# Estrutura
-
-```
-version.json
-```
-
-Exemplo:
+Se estiver usando como dependência do projeto, adicione atalhos no `package.json`:
 
 ```json
 {
-    "major": 2,
-    "minor": 14,
-    "build": 583
+    "scripts": {
+        "build": "versioner build",
+        "minor": "versioner minor",
+        "major": "versioner major"
+    }
 }
 ```
 
----
+E use:
 
-# Comandos
-
-## Build
-
-Incrementa apenas a Build.
-
-```
-2.14.583
-
-↓
-
-2.14.584
+```bash
+npm run build -- "Corrige login"
 ```
 
 ---
 
-## Minor
+## Modelo de versionamento
 
-Incrementa Minor e Build.
+Formato:
 
 ```
-2.14.583
+major.minor.build
+```
 
-↓
+Exemplo: `2.14.583`
 
-2.15.584
+### Build
+
+Incrementa em **toda** release e **nunca** volta para zero. Representa o total de releases já publicadas.
+
+```
+2.14.583 → 2.14.584 → 2.14.585
+```
+
+### Minor
+
+Pequenas evoluções dentro de uma mesma versão principal. Zera quando ocorre um Major.
+
+```
+2.14.583 → 2.15.584
+```
+
+### Major
+
+Grandes marcos: primeira versão pública, reescrita, nova arquitetura. Definido manualmente.
+
+```
+2.14.583 → 3.0.584
+```
+
+O Build continua incrementando normalmente mesmo em um Major.
+
+### Por que não SemVer
+
+O SemVer descreve compatibilidade de API. Este modelo descreve o **histórico do projeto**: quantas grandes versões existiram, quantas evoluções cada uma recebeu e quantas releases foram publicadas desde o início.
+
+O formato continua compatível com `x.y.z`, então o `package.json` permanece válido.
+
+---
+
+## Comandos
+
+| Comando | O que faz |
+|---|---|
+| `versioner init` | Inicializa o Versioner no projeto |
+| `versioner build "msg"` | Incrementa a Build e publica a release |
+| `versioner minor "msg"` | Incrementa Minor e Build |
+| `versioner major "msg"` | Incrementa Major, zera Minor, incrementa Build |
+| `versioner version` | Mostra a versão atual |
+| `versioner status` | Mostra versão, arquivos monitorados e estado do Git |
+| `versioner help [comando]` | Ajuda |
+
+Aliases: `b`, `m`, `M`, `i`, `v`, `s`, `h`.
+
+### Flags de release
+
+| Flag | Efeito |
+|---|---|
+| `--no-push` | Faz commit mas não envia para o remoto |
+| `--no-git` | Só versiona os arquivos, não toca no Git |
+| `--tag` | Cria uma tag Git para a release |
+| `--no-tag` | Desativa a tag mesmo se ligada na config |
+| `--dry-run` | Simula tudo sem gravar nada |
+
+### Flags do init
+
+| Flag | Efeito |
+|---|---|
+| `--yes`, `-y` | Usa os padrões sem perguntar |
+| `--force`, `-f` | Sobrescreve arquivos existentes |
+
+---
+
+## Arquivos gerados
+
+### `.versioner.json`
+
+O contador de versão do projeto.
+
+```json
+{
+    "major": 1,
+    "minor": 4,
+    "build": 273
+}
+```
+
+### `versioner.config.json`
+
+Define o comportamento e quais arquivos recebem a versão.
+
+```json
+{
+    "versionFile": ".versioner.json",
+    "files": [
+        {
+            "path": "package.json",
+            "field": "version"
+        },
+        {
+            "path": "app.json",
+            "field": "expo.version"
+        }
+    ],
+    "commit": {
+        "template": "v{version} - {message}",
+        "minLength": 3,
+        "maxLength": 100
+    },
+    "git": {
+        "enabled": true,
+        "add": true,
+        "commit": true,
+        "push": true,
+        "tag": false,
+        "tagPrefix": "v",
+        "tagMessage": "Release {version}"
+    }
+}
+```
+
+**`files`** — qualquer arquivo `.json`. O campo `field` aceita caminhos aninhados:
+
+```
+version
+expo.version
+project.meta.version
+```
+
+**`commit.template`** — aceita `{version}`, `{message}` e `{type}`.
+
+Arquivos de código (`app.config.js`, `app.config.ts`) são detectados pelo `init` mas **não** são alterados automaticamente. Nesses casos, leia a versão do JSON:
+
+```js
+const { version } = require("./package.json");
+
+export default {
+    expo: { version },
+};
 ```
 
 ---
 
-## Major
+## Segurança da release
 
-Incrementa Major, reinicia Minor e incrementa Build.
+Se qualquer etapa falhar no meio do caminho, o Versioner reverte o arquivo de versão e todos os arquivos alterados. Nada fica commitado pela metade.
+
+O `push` é ignorado com um aviso quando não existe remoto configurado, em vez de derrubar a release. Se a branch ainda não tiver upstream, o Versioner usa `--set-upstream origin <branch>` automaticamente.
+
+Mensagens de commit são passadas por `execFile` com array de argumentos, então aspas, `$` e crases não quebram nem executam nada.
+
+---
+
+## Uso programático
+
+```js
+const { ReleaseManager, createContext } = require("@carloscoding/versioner");
+
+const context = createContext({ type: "build", message: "Release automática" });
+
+new ReleaseManager().run(context);
+```
+
+Também são exportados `VersionManager`, `ConfigManager`, `FileManager`, `GitManager`, `CommandRouter`, `logger` e `constants`.
+
+---
+
+## Arquitetura
 
 ```
-2.14.583
+bin/versioner.js         Binário da CLI (shebang)
+src/cli.js               Bootstrap da CLI e tratamento de erro
+src/index.js             Entrada programática (require do pacote)
+src/services/            CommandRouter (mapa nome → classe)
+src/commands/            Um arquivo por comando
+src/managers/            Release, Version, Config, File, Git
+src/core/Context.js      Objeto compartilhado da execução
+src/utils/               file, object, time, args, logger
+src/constants/           Valores fixos e metadados de ajuda
+```
 
-↓
+Regra central: nenhum Manager conhece outro Manager. Todos leem e escrevem apenas no `Context`. O `ReleaseManager` só orquestra a sequência:
 
-3.0.584
+```
+validate → loadConfig → version → updateFiles → git → finish
 ```
 
 ---
 
-# Objetivos futuros
+## Desenvolvimento
 
-O projeto foi pensado para crescer gradualmente.
+```bash
+npm test    # teste de fumaça em um repositório Git temporário
+```
 
-Planejamento:
+Para logs completos de erro:
 
-* Atualização automática do `package.json`.
-* Atualização automática do `app.json` (Expo).
-* Atualização de arquivos personalizados.
-* Criação automática de tags Git.
-* Geração automática de CHANGELOG.
-* Publicação automática.
-* Transformação em uma CLI.
-* Publicação como pacote npm.
+```bash
+VERSIONER_DEBUG=1 versioner build "teste"
+```
+
+Cores são desativadas automaticamente com `NO_COLOR=1` ou fora de um TTY.
 
 ---
 
-# Licença
+## Licença
 
 MIT.
