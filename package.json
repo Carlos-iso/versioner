@@ -1,50 +1,50 @@
 {
-    "name": "@carloscoding/versioner",
-    "version": "1.1.14",
-    "description": "CLI para automatizar versionamento e fluxo de Git usando um modelo de versionamento baseado em marcos do projeto (major.minor.build).",
-    "license": "MIT",
-    "author": "Carlos-iso",
-    "type": "commonjs",
-    "main": "src/index.js",
-    "bin": {
-        "versioner": "bin/versioner.js"
-    },
-    "files": [
-        "bin",
-        "src",
-        "README.md",
-        "LICENSE"
-    ],
-    "engines": {
-        "node": ">=16"
-    },
-    "scripts": {
-        "start": "node ./bin/versioner.js",
-        "dev": "node ./bin/versioner.js",
-        "help": "node ./bin/versioner.js help",
-        "test": "node ./test/smoke.js",
-        "prepublishOnly": "node ./test/smoke.js"
-    },
-    "keywords": [
-        "version",
-        "versioning",
-        "release",
-        "git",
-        "automation",
-        "cli",
-        "build",
-        "semver",
-        "expo"
-    ],
-    "publishConfig": {
-        "access": "public"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/CarlosCoding/versioner.git"
-    },
-    "bugs": {
-        "url": "https://github.com/CarlosCoding/versioner/issues"
-    },
-    "homepage": "https://github.com/CarlosCoding/versioner#readme"
+	"name": "@carloscoding/versioner",
+	"version": "1.1.15",
+	"description": "CLI para automatizar versionamento e fluxo de Git usando um modelo de versionamento baseado em marcos do projeto (major.minor.build).",
+	"license": "MIT",
+	"author": "Carlos-iso",
+	"type": "commonjs",
+	"main": "src/index.js",
+	"bin": {
+		"versioner": "bin/versioner.js"
+	},
+	"files": [
+		"bin",
+		"src",
+		"README.md",
+		"LICENSE"
+	],
+	"engines": {
+		"node": ">=18"
+	},
+	"scripts": {
+		"start": "node ./bin/versioner.js",
+		"dev": "node ./bin/versioner.js",
+		"help": "node ./bin/versioner.js help",
+		"test": "node ./test/smoke.js",
+		"prepublishOnly": "node ./test/smoke.js"
+	},
+	"keywords": [
+		"version",
+		"versioning",
+		"release",
+		"git",
+		"automation",
+		"cli",
+		"build",
+		"semver",
+		"expo"
+	],
+	"publishConfig": {
+		"access": "public"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/Carlos-iso/versioner.git"
+	},
+	"homepage": "https://github.com/Carlos-iso/versioner",
+	"bugs": {
+		"url": "https://github.com/Carlos-iso/versioner/issues"
+	}
 }
