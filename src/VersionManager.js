@@ -57,7 +57,7 @@ class VersionManager {
 		return {
 			previousVersion,
 
-			currentVersion: this.toString(version),
+			version: this.toString(version),
 
 			previous,
 
