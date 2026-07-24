@@ -1,6 +1,5 @@
 {
     "name": "versioner",
-    "version": "1.0.7",
     "description": "Um script simples para automatizar o versionamento de projetos utilizando um modelo próprio de versionamento baseado em marcos do projeto.",
     "license": "MIT",
     "author": "CarlosCoding",

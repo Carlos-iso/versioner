@@ -11,14 +11,23 @@ class GitManager {
 
 	add() {
 		this.run("git add .");
+		return {
+			success: true,
+		};
 	}
 
 	commit(message) {
 		this.run(`git commit -m "${message}"`);
+		return {
+			success: true,
+		};
 	}
 
 	push() {
 		this.run("git push");
+		return {
+			success: true,
+		};
 	}
 }
 
