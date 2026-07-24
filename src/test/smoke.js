@@ -12,7 +12,7 @@ const os = require("os");
 const path = require("path");
 const { execFileSync } = require("child_process");
 
-const BIN = path.join(__dirname, "..", "bin", "versioner.js");
+const BIN = path.join(__dirname, "../../", "bin", "versioner.js");
 
 let failures = 0;
 
