@@ -35,10 +35,30 @@ function setValue(object, path, value) {
 	current[keys[0]] = value;
 }
 
+function formatDuration(milliseconds) {
+
+    if (milliseconds < 1000) {
+        return `${milliseconds} ms`;
+    }
+
+    const seconds = milliseconds / 1000;
+
+    if (seconds < 60) {
+        return `${seconds.toFixed(2)} s`;
+    }
+
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = (seconds % 60).toFixed(2);
+
+    return `${minutes} min ${remainingSeconds} s`;
+
+}
+
 module.exports = {
 	root,
 	exists,
 	readJSON,
 	writeJSON,
 	setValue,
+    formatDuration
 };

@@ -2,6 +2,7 @@ const VersionManager = require("./VersionManager");
 const ConfigManager = require("./ConfigManager");
 const FileManager = require("./FileManager");
 const GitManager = require("./GitManager");
+const { formatDuration } = require("./utils");
 
 const logger = require("./Logger");
 
@@ -123,7 +124,7 @@ class ReleaseManager {
 
 		logger.info(`Versão: ${context.previousVersion} → ${context.version}`);
 
-		logger.info(`Arquivos atualizados: ${context.files.length}`);
+		logger.info(`Arquivos vercioandos: ${context.files.length}`);
 
 		logger.info(`Git Add: ${context.git.add ? "✔" : "✖"}`);
 
@@ -131,7 +132,7 @@ class ReleaseManager {
 
 		logger.info(`Git Push: ${context.git.push ? "✔" : "✖"}`);
 
-		logger.info(`Tempo: ${duration}`);
+		logger.info(`Tempo: ${formatDuration(duration)}s`);
 	}
 }
 
