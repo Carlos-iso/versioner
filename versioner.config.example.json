@@ -1,0 +1,13 @@
+{
+    "versionFile": "version.json",
+    "files": [
+        {
+            "path": "package.json",
+            "field": "version"
+        },
+        {
+            "path": "app.json",
+            "field": "expo.version"
+        }
+    ]
+}

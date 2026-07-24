@@ -1,0 +1,23 @@
+{
+	"name": "versioner",
+	"version": "0.0.1",
+	"description": "Um script simples para automatizar o versionamento de projetos utilizando um modelo próprio de versionamento baseado em marcos do projeto.",
+	"license": "MIT",
+	"author": "CarlosCoding",
+	"type": "commonjs",
+	"main": "index.js",
+	"bin": {
+		"versioner": "bin/versioner.js"
+	},
+	"scripts": {
+		"start": "node ./bin/versioner.js",
+		"dev": "node ./bin/versioner.js"
+	},
+	"keywords": [
+		"version",
+		"release",
+		"git",
+		"automation",
+		"cli"
+	]
+}
