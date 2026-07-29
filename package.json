@@ -1,6 +1,6 @@
 {
 	"name": "@carlos-iso/versioner",
-	"version": "0.0.2",
+	"version": "0.0.3",
 	"description": "CLI para automatizar versionamento e fluxo de Git usando um modelo de versionamento baseado em marcos do projeto (major.minor.build).",
 	"license": "MIT",
 	"author": "Carlos-iso",
@@ -21,6 +21,9 @@
 	"scripts": {
 		"start": "node ./bin/versioner.js",
 		"dev": "node ./bin/versioner.js",
+		"pull": "git pull origin main && npm install",
+		"push": "git status && git add . && git commit -m 'Update Readme'",
+		"versioner:build": "versioner build 'Update Readme'",
 		"help": "node ./bin/versioner.js help",
 		"test": "node ./test/smoke.js",
 		"prepublishOnly": "node ./src/test/smoke.js"

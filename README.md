@@ -24,22 +24,16 @@ Sem dependências externas. Só Node.js e Git.
 
 ## Instalação
 
-No projeto:
-
-```bash
-npm install -D @carloscoding/versioner
-```
-
 Sem instalar:
 
 ```bash
-npx @carloscoding/versioner init
+npx @carlos-iso/versioner init
 ```
 
 Global:
 
 ```bash
-npm install -g @carloscoding/versioner
+npm install -g @carlos-iso/versioner
 ```
 
 Requer Node.js 16 ou superior.
@@ -50,7 +44,7 @@ Requer Node.js 16 ou superior.
 
 ```bash
 cd meu-projeto
-npx @carloscoding/versioner init
+npx @carlos-iso/versioner init
 npx versioner build "primeira release"
 ```
 
