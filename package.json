@@ -22,11 +22,9 @@
 		"start": "node ./bin/versioner.js",
 		"dev": "node ./bin/versioner.js",
 		"pull": "git pull origin main && npm install",
-		"push": "git status && git add . && git commit -m 'Update Readme'",
-		"versioner:build": "versioner build 'Update Readme'",
+		"versioner:build": "versioner build 'Update To Presentation'",
 		"help": "node ./bin/versioner.js help",
-		"test": "node ./test/smoke.js",
-		"prepublishOnly": "node ./src/test/smoke.js"
+		"test": "node ./src/test/smoke.js"
 	},
 	"keywords": [
 		"version",

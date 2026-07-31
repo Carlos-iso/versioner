@@ -36,7 +36,7 @@ Global:
 npm install -g @carlos-iso/versioner
 ```
 
-Requer Node.js 16 ou superior.
+Requer Node.js 18 ou superior.
 
 ---
 
