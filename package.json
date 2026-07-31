@@ -1,6 +1,6 @@
 {
 	"name": "@carlos-iso/versioner",
-	"version": "0.0.4",
+	"version": "0.0.5",
 	"description": "CLI para automatizar versionamento e fluxo de Git usando um modelo de versionamento baseado em marcos do projeto (major.minor.build).",
 	"license": "MIT",
 	"author": "Carlos-iso",
