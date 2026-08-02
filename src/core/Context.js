@@ -51,6 +51,12 @@ function createContext({ type, message = "", cwd = process.cwd(), flags = {} } =
 			tag: false,
 			tagName: null,
 			branch: null,
+
+			// Estado anterior à etapa do Git, guardado para permitir o rollback.
+			// headBefore: commit em que HEAD estava (null em repositório sem commits).
+			// indexBefore: árvore do índice antes do "git add".
+			headBefore: null,
+			indexBefore: null,
 		},
 
 		// Modo simulação
