@@ -12,13 +12,17 @@ class VersionManager {
 	}
 
 	/**
-	 * Lê o arquivo de versão. Cria com os valores padrão se não existir.
+	 * Lê o arquivo de versão.
+	 *
+	 * A ausência do arquivo é erro, não motivo para recomeçar do zero: criar
+	 * o padrão aqui faria a versão do projeto regredir para 0.0.1 na primeira
+	 * release, sobrescrevendo a versão real nos arquivos monitorados.
 	 */
 	load() {
 		if (!this.exists()) {
-			this.save(DEFAULT_VERSION);
-
-			return { ...DEFAULT_VERSION };
+			throw new Error(
+				'Arquivo de versão não encontrado. Execute "versioner init" para criá-lo.',
+			);
 		}
 
 		const version = readJSON(this.file);
