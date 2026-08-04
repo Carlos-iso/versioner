@@ -159,6 +159,11 @@ class ReleaseManager {
 			return;
 		}
 
+		// Fotografia do estado anterior: sem ela o rollback não consegue
+		// desfazer commit, tag e índice quando uma etapa seguinte falha.
+		context.git.headBefore = this.gitManager.head();
+		context.git.indexBefore = this.gitManager.saveIndex();
+
 		if (git.add) {
 			this.gitManager.add();
 			context.git.add = true;
@@ -242,6 +247,8 @@ class ReleaseManager {
 		logger.break();
 		logger.error(error.message);
 
+		const undoneGit = this.rollbackGit(context);
+
 		const restoredFiles = this.fileManager.rollback();
 
 		const restoredVersion =
@@ -249,13 +256,46 @@ class ReleaseManager {
 				? this.versionManager.rollback(context.previous)
 				: false;
 
-		if (restoredFiles || restoredVersion) {
-			logger.warn("Alterações revertidas. Nada foi commitado.");
+		if (restoredFiles || restoredVersion || undoneGit.length) {
+			logger.warn(
+				undoneGit.length
+					? `Alterações revertidas. Desfeito também no Git: ${undoneGit.join(", ")}.`
+					: "Alterações revertidas. Nada foi commitado.",
+			);
 		}
 
 		if (process.env.VERSIONER_DEBUG) {
 			console.error(error);
 		}
+	}
+
+	/**
+	 * Desfaz, na ordem inversa, o que a etapa do Git chegou a executar.
+	 *
+	 * Sem isso o rollback restaura apenas os arquivos e anuncia que nada foi
+	 * commitado, enquanto commit, tag e índice permanecem com a versão nova.
+	 */
+	rollbackGit(context) {
+		const undone = [];
+
+		if (context.dryRun) {
+			return undone;
+		}
+
+		if (context.git.tagName && this.gitManager.deleteTag(context.git.tagName).success) {
+			undone.push("tag");
+		}
+
+		if (context.git.commit) {
+			this.gitManager.undoCommit(context.git.headBefore);
+			undone.push("commit");
+		}
+
+		if (context.git.add && this.gitManager.restoreIndex(context.git.indexBefore).success) {
+			undone.push("índice");
+		}
+
+		return undone;
 	}
 
 	buildCommitMessage(context) {

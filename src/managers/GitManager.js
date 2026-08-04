@@ -41,6 +41,62 @@ class GitManager {
 		return this.query(["rev-parse", "--abbrev-ref", "HEAD"]);
 	}
 
+	/**
+	 * Commit atual. Devolve null em repositório sem commits.
+	 */
+	head() {
+		return this.query(["rev-parse", "HEAD"]);
+	}
+
+	/**
+	 * Grava o índice atual como uma árvore e devolve o hash dela.
+	 * Usado antes do "git add" para que o rollback consiga restaurar
+	 * exatamente o que o usuário já tinha preparado, inclusive alterações
+	 * adicionadas parcialmente.
+	 */
+	saveIndex() {
+		return this.query(["write-tree"]);
+	}
+
+	/**
+	 * Restaura o índice a partir de uma árvore salva por saveIndex(),
+	 * sem tocar no working tree.
+	 */
+	restoreIndex(tree) {
+		if (!tree) {
+			return { success: false, reason: "índice anterior não foi salvo" };
+		}
+
+		this.run(["read-tree", tree], { silent: true });
+
+		return { success: true };
+	}
+
+	/**
+	 * Desfaz o commit da release preservando o working tree.
+	 * Sem commit anterior, o da release era o primeiro do repositório:
+	 * nesse caso a própria referência precisa ser removida.
+	 */
+	undoCommit(previousHead) {
+		if (previousHead) {
+			this.run(["reset", "--soft", previousHead], { silent: true });
+		} else {
+			this.run(["update-ref", "-d", "HEAD"], { silent: true });
+		}
+
+		return { success: true };
+	}
+
+	deleteTag(name) {
+		if (!this.tagExists(name)) {
+			return { success: false, reason: "tag não existe" };
+		}
+
+		this.run(["tag", "-d", name], { silent: true });
+
+		return { success: true };
+	}
+
 	hasRemote() {
 		const remotes = this.query(["remote"]);
 
