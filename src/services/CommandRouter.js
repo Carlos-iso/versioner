@@ -5,6 +5,8 @@ const InitCommand = require("../commands/InitCommand");
 const HelpCommand = require("../commands/HelpCommand");
 const VersionCommand = require("../commands/VersionCommand");
 const StatusCommand = require("../commands/StatusCommand");
+const PullCommand = require("../commands/PullCommand");
+const MergeCommand = require("../commands/MergeCommand");
 
 const logger = require("../utils/logger");
 const { ALIASES } = require("../constants");
@@ -23,6 +25,8 @@ class CommandRouter {
 			help: HelpCommand,
 			version: VersionCommand,
 			status: StatusCommand,
+			pull: PullCommand,
+			merge: MergeCommand,
 		};
 	}
 

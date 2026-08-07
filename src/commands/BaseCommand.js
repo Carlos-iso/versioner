@@ -20,6 +20,7 @@ class BaseCommand {
 		const context = createContext({
 			type: this.type,
 			message: toMessage(values),
+			args: values,
 			cwd: process.cwd(),
 			flags,
 		});

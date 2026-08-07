@@ -67,8 +67,10 @@ class VersionManager {
 
 	/**
 	 * Calcula a próxima versão sem gravar nada.
+	 * Com semver=true: patch/minor/major seguem o padrão SemVer (resets incluídos).
+	 * Com semver=false (padrão): build é um contador global que nunca zera.
 	 */
-	next(type, version) {
+	next(type, version, { semver = false } = {}) {
 		if (!VERSION_TYPES.includes(type)) {
 			throw new Error(
 				`Tipo de versão inválido: "${type}". Utilize build, minor ou major.`,
@@ -77,16 +79,29 @@ class VersionManager {
 
 		const result = { ...version };
 
-		// A Build sempre incrementa. Ela nunca volta para zero.
-		result.build += 1;
+		if (semver) {
+			if (type === "build") {
+				result.build += 1;
+			} else if (type === "minor") {
+				result.minor += 1;
+				result.build = 0;
+			} else if (type === "major") {
+				result.major += 1;
+				result.minor = 0;
+				result.build = 0;
+			}
+		} else {
+			// Build sempre incrementa; nunca volta para zero.
+			result.build += 1;
 
-		if (type === "minor") {
-			result.minor += 1;
-		}
+			if (type === "minor") {
+				result.minor += 1;
+			}
 
-		if (type === "major") {
-			result.major += 1;
-			result.minor = 0;
+			if (type === "major") {
+				result.major += 1;
+				result.minor = 0;
+			}
 		}
 
 		return result;
@@ -95,10 +110,10 @@ class VersionManager {
 	/**
 	 * Incrementa e persiste (a menos que dryRun seja true).
 	 */
-	increment(type, { dryRun = false } = {}) {
+	increment(type, { dryRun = false, semver = false } = {}) {
 		const previous = this.load();
 
-		const current = this.next(type, previous);
+		const current = this.next(type, previous, { semver });
 
 		if (!dryRun) {
 			this.save(current);

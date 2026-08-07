@@ -106,11 +106,13 @@ Grandes marcos: primeira versão pública, reescrita, nova arquitetura. Definido
 
 O Build continua incrementando normalmente mesmo em um Major.
 
-### Por que não SemVer
+### Por que não SemVer (padrão)
 
 O SemVer descreve compatibilidade de API. Este modelo descreve o **histórico do projeto**: quantas grandes versões existiram, quantas evoluções cada uma recebeu e quantas releases foram publicadas desde o início.
 
 O formato continua compatível com `x.y.z`, então o `package.json` permanece válido.
+
+Se preferir o comportamento SemVer, ative `semver: true` no `versioner.config.json` — veja a seção [SemVer](#semver).
 
 ---
 
@@ -124,9 +126,11 @@ O formato continua compatível com `x.y.z`, então o `package.json` permanece v�
 | `versioner major "msg"` | Incrementa Major, zera Minor, incrementa Build |
 | `versioner version` | Mostra a versão atual |
 | `versioner status` | Mostra versão, arquivos monitorados e estado do Git |
+| `versioner pull` | Atualiza o repositório local com as mudanças do remoto |
+| `versioner merge <branch>` | Faz merge de um branch no branch atual |
 | `versioner help [comando]` | Ajuda |
 
-Aliases: `b`, `m`, `M`, `i`, `v`, `s`, `h`.
+Aliases: `b`, `m`, `M`, `i`, `v`, `s`, `p`, `h`.
 
 ### Flags de release
 
@@ -144,6 +148,64 @@ Aliases: `b`, `m`, `M`, `i`, `v`, `s`, `h`.
 |---|---|
 | `--yes`, `-y` | Usa os padrões sem perguntar |
 | `--force`, `-f` | Sobrescreve arquivos existentes |
+
+### Flags do pull
+
+| Flag | Efeito |
+|---|---|
+| `--merge` | Usa merge em vez de rebase (padrão é rebase) |
+
+---
+
+## SemVer
+
+Para projetos que seguem o [Versionamento Semântico](https://semver.org/), ative o modo SemVer no `versioner.config.json`:
+
+```json
+{
+    "semver": true
+}
+```
+
+Com `semver: true`, o comportamento de cada comando muda:
+
+| Versão atual | Comando | Resultado |
+|---|---|---|
+| `1.2.5` | `build` | `1.2.6` (patch++) |
+| `1.2.5` | `minor` | `1.3.0` (minor++, patch vira 0) |
+| `1.2.5` | `major` | `2.0.0` (major++, minor e patch viram 0) |
+
+Comparação com o comportamento padrão (sem SemVer):
+
+| Versão atual | Comando | Padrão | SemVer |
+|---|---|---|---|
+| `1.2.5` | `minor` | `1.3.6` | `1.3.0` |
+| `1.2.5` | `major` | `2.0.6` | `2.0.0` |
+
+No padrão, o `build` é um contador global que nunca zera — ele representa o total de releases já feitas. No SemVer, o `patch` reinicia a cada `minor` ou `major`, seguindo a convenção da comunidade.
+
+---
+
+## Add por arquivo
+
+Por padrão, o Versioner executa `git add .` antes de cada commit, incluindo todas as mudanças do repositório. Para controlar quais arquivos entram no commit, configure `addAll: false`:
+
+```json
+{
+    "git": {
+        "addAll": false
+    }
+}
+```
+
+Com `addAll: false`, a sintaxe muda: o primeiro argumento é a lista de arquivos (separados por espaço), e o segundo é a mensagem do commit.
+
+```bash
+versioner build "src/login.js" "Corrige autenticação"
+versioner minor "src/auth.js src/session.js" "Adiciona refresh token"
+```
+
+Os arquivos de versão (`.versioner.json`, `package.json` etc.) são sempre incluídos automaticamente, independente do que você especificar. Arquivos não listados permanecem no working tree sem serem commitados.
 
 ---
 
@@ -186,12 +248,14 @@ Define o comportamento e quais arquivos recebem a versão.
     "git": {
         "enabled": true,
         "add": true,
+        "addAll": true,
         "commit": true,
         "push": true,
         "tag": false,
         "tagPrefix": "v",
         "tagMessage": "Release {version}"
-    }
+    },
+    "semver": false
 }
 ```
 
@@ -204,6 +268,10 @@ project.meta.version
 ```
 
 **`commit.template`** — aceita `{version}`, `{message}` e `{type}`.
+
+**`git.addAll`** — `true` faz `git add .` (padrão); `false` exige que os arquivos sejam listados no comando.
+
+**`semver`** — `false` usa o modelo de build global (padrão); `true` segue o padrão SemVer com resets.
 
 Arquivos de código (`app.config.js`, `app.config.ts`) são detectados pelo `init` mas **não** são alterados automaticamente. Nesses casos, leia a versão do JSON:
 
@@ -266,7 +334,7 @@ validate → loadConfig → version → updateFiles → git → finish
 ## Desenvolvimento
 
 ```bash
-npm test    # teste de fumaça em um repositório Git temporário
+npm test    # 42 asserções em um repositório Git temporário
 ```
 
 Para logs completos de erro:

@@ -4,11 +4,12 @@
  * Regra da arquitetura: nenhum Manager conhece outro Manager.
  * Todos leem e escrevem apenas no Context.
  */
-function createContext({ type, message = "", cwd = process.cwd(), flags = {} } = {}) {
+function createContext({ type, message = "", args = [], cwd = process.cwd(), flags = {} } = {}) {
 	return {
 		// Argumentos da CLI
 		type,
 		message,
+		args,
 		flags,
 
 		// Diretório onde a ferramenta foi executada
@@ -58,6 +59,9 @@ function createContext({ type, message = "", cwd = process.cwd(), flags = {} } =
 			headBefore: null,
 			indexBefore: null,
 		},
+
+		// Arquivos a adicionar no git add (null = todos)
+		addFiles: null,
 
 		// Modo simulação
 		dryRun: false,

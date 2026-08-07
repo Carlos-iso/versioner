@@ -131,8 +131,39 @@ class GitManager {
 		return this.query(["log", "-1", "--pretty=%s"]);
 	}
 
-	add() {
-		this.run(["add", "."]);
+	/**
+	 * Adiciona arquivos ao stage.
+	 * Sem argumentos: git add . (todos os arquivos).
+	 * Com array de arquivos: git add arquivo1 arquivo2...
+	 */
+	add(files = null) {
+		if (files && files.length) {
+			this.run(["add", ...files]);
+		} else {
+			this.run(["add", "."]);
+		}
+
+		return { success: true };
+	}
+
+	pull({ rebase = true } = {}) {
+		if (!this.hasRemote()) {
+			return { success: false, skipped: true, reason: "nenhum remoto configurado" };
+		}
+
+		const args = rebase ? ["pull", "--rebase"] : ["pull"];
+
+		this.run(args);
+
+		return { success: true };
+	}
+
+	merge(branch) {
+		if (!branch) {
+			throw new Error('Informe o nome do branch. Exemplo: versioner merge feature/login');
+		}
+
+		this.run(["merge", branch]);
 
 		return { success: true };
 	}

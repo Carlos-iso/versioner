@@ -24,6 +24,7 @@ const DEFAULT_COMMIT = {
 const DEFAULT_GIT = {
 	enabled: true,
 	add: true,
+	addAll: true,
 	commit: true,
 	push: true,
 	tag: false,
@@ -36,6 +37,7 @@ const DEFAULT_CONFIG = {
 	files: [],
 	commit: DEFAULT_COMMIT,
 	git: DEFAULT_GIT,
+	semver: false,
 };
 
 /**
@@ -115,6 +117,25 @@ const COMMANDS = [
 		details: [],
 	},
 	{
+		name: "pull",
+		usage: "versioner pull [--merge]",
+		summary: "Atualiza o repositório local com as mudanças do remoto.",
+		details: [
+			"Por padrão usa rebase (histórico limpo, sem merge commits).",
+			"",
+			"Flags:",
+			"  --merge       Usa merge ao invés de rebase.",
+		],
+	},
+	{
+		name: "merge",
+		usage: "versioner merge <branch>",
+		summary: "Faz merge de um branch no branch atual.",
+		details: [
+			"Exemplo: versioner merge feature/login",
+		],
+	},
+	{
 		name: "help",
 		usage: "versioner help [comando]",
 		summary: "Lista os comandos disponíveis.",
@@ -130,6 +151,7 @@ const ALIASES = {
 	h: "help",
 	v: "version",
 	s: "status",
+	p: "pull",
 	"--help": "help",
 	"-h": "help",
 	"--version": "version",

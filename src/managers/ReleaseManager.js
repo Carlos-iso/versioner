@@ -75,33 +75,45 @@ class ReleaseManager {
 
 	validateMessage(context) {
 		const { minLength, maxLength } = context.config.commit;
+		const addAll = context.config.git.addAll !== false;
 
-		const message = String(context.message || "").trim();
+		// Modo por arquivo: versioner build "arq1 arq2" "mensagem"
+		if (!addAll && context.args.length >= 2) {
+			const filesArg = context.args[0];
+			context.addFiles = filesArg.trim().split(/\s+/).filter(Boolean);
+			context.message = context.args.slice(1).join(" ").trim();
+		} else {
+			context.message = String(context.message || "").trim();
+		}
 
-		if (!message) {
+		if (!context.message) {
+			if (!addAll) {
+				throw new Error(
+					`Informe os arquivos e a mensagem. Exemplo: versioner ${context.type} "arq1 arq2" "Corrige login"`,
+				);
+			}
 			throw new Error(
 				`Informe uma mensagem para o commit. Exemplo: versioner ${context.type} "Corrige login"`,
 			);
 		}
 
-		if (message.length < minLength) {
+		if (context.message.length < minLength) {
 			throw new Error(
 				`A mensagem do commit deve ter no mínimo ${minLength} caracteres.`,
 			);
 		}
 
-		if (message.length > maxLength) {
+		if (context.message.length > maxLength) {
 			throw new Error(
 				`A mensagem do commit deve ter no máximo ${maxLength} caracteres.`,
 			);
 		}
-
-		context.message = message;
 	}
 
 	version(context) {
 		const result = this.versionManager.increment(context.type, {
 			dryRun: context.dryRun,
+			semver: context.config.semver === true,
 		});
 
 		context.previous = result.previous;
@@ -165,9 +177,18 @@ class ReleaseManager {
 		context.git.indexBefore = this.gitManager.saveIndex();
 
 		if (git.add) {
-			this.gitManager.add();
+			let filesToAdd = null;
+
+			if (context.addFiles) {
+				// Sempre inclui os arquivos de versão + os especificados pelo usuário
+				const versionFiles = [context.config.versionFile, ...context.files];
+				filesToAdd = [...new Set([...versionFiles, ...context.addFiles])];
+			}
+
+			this.gitManager.add(filesToAdd);
 			context.git.add = true;
-			logger.success("  git add");
+			const addLabel = filesToAdd ? filesToAdd.join(" ") : ".";
+			logger.success(`  git add ${addLabel}`);
 		}
 
 		if (git.commit) {

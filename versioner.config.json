@@ -14,10 +14,12 @@
     "git": {
         "enabled": true,
         "add": true,
+        "addAll": true,
         "commit": true,
         "push": true,
         "tag": false,
         "tagPrefix": "v",
         "tagMessage": "Release {version}"
-    }
+    },
+    "semver": false
 }
